@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('registration_number');
             $table->string('type');
-            $table->number('nbr_places');
+            $table->integer('nbr_places');
             $table->timestamps();
 
             $table->unsignedBigInteger('tour_id');

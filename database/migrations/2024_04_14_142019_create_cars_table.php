@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->decimal('price_per_day');
             $table->date('production_date');
-            $table->enum('fuel',['Diesel', 'Gasoline', 'Gas', 'Electricity']);
+            $table->string('fuel');
             $table->integer('nbr_places');
             $table->string('description');
             $table->timestamps();
