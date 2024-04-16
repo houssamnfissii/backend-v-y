@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('type')->default('client');
             $table->string('address');
-            $table->integer('telephone');
+            $table->string('telephone');
             $table->string('city');
             $table->string('country');
             $table->date('birth_date');

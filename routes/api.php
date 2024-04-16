@@ -18,3 +18,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::apiResource('cars',CarController::class);
+Route::get('cars/car_offers',[CarController::class,'car_offers']);

@@ -13,8 +13,8 @@ class Hotel extends Model
 
     protected $fillable=['name','address','description','nbr_stars','latitude','longitude'];
 
-    public function offers(){
-        return $this->hasMany(Offer::class);
+    public function offer(){
+        return $this->hasOne(Offer::class);
     }
 
     public function rooms(){

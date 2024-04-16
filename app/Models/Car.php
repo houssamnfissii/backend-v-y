@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Offer;
 use App\Models\Cmodel;
+use App\Models\Reservation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -17,7 +18,12 @@ class Car extends Model
         return $this->belongsTo(Cmodel::class);
     }
 
-    public function offers(){
-        return $this->hasMany(Offer::class);
+    public function offer(){
+        return $this->hasOne(Offer::class);
     }
+    
+    public function reservations(){
+        return $this->hasMany(Reservation::class);
+    }
+
 }

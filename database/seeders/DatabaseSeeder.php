@@ -5,7 +5,12 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Car;
 use App\Models\Cbrand;
+use App\Models\Client;
 use App\Models\Cmodel;
+use App\Models\Host;
+use App\Models\Image;
+use App\Models\Offer;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -75,7 +80,99 @@ class DatabaseSeeder extends Seeder
             Car::create($carData);
         }
 
+        $usersData = [
+            [
+                'CIN' => 'CD123456',
+                'first_name' => 'Youssra',
+                'last_name' => 'Benmimoun',
+                'email' => 'youssra.benmimou@gmail.com',
+                'password' => '123',
+                'type' => 'user',
+                'address' => 'bit',
+                'telephone' => '0123456789',
+                'city' => 'Tanger',
+                'country' => 'Maroc',
+                'birth_date' => '1998-08-11'
+            ],
+            
+            [
+                'CIN' => 'CD654321',
+                'first_name' => 'Aida',
+                'last_name' => 'Benmimoun',
+                'email' => 'aida.benmimou@gmail.com',
+                'password' => '123',
+                'type' => 'user',
+                'address' => 'bit',
+                'telephone' => '0123456789',
+                'city' => 'Tanger',
+                'country' => 'Maroc',
+                'birth_date' => '2000-06-06'
+            ],
+            
+        ];
 
+        foreach ($usersData as $userData) {
+            User::create($userData);
+        }
 
+        $hostsData = [
+            [
+                'user_id' => 1
+            ]
+            
+        ];
+
+        foreach ($hostsData as $hostData) {
+            Host::create($hostData);
+        }
+
+        
+        $offersData = [
+            [
+                'description' => "description",
+                'type' => 'car 1',
+                'host_id' => 1,
+                'car_id' => 1
+            ],
+            
+            [
+                'description' => "description",
+                'type' => 'car 2',
+                'host_id' => 1,
+                'car_id' => 2
+            ],
+            
+        ];
+
+        foreach ($offersData as $offerData) {
+            Offer::create($offerData);
+        }
+
+        $clientsData = [
+            [
+                'user_id' => 2
+            ]
+            
+        ];
+
+        foreach ($clientsData as $clientData) {
+            Client::create($clientData);
+        }
+
+        $imagesData = [
+            [
+                'url' => '/assets/polestar-1.jpg',
+                'offer_id' => 1,
+            ],
+            [
+                'url' => '/assets/car2.jpg',
+                'offer_id' => 2,
+            ]
+            
+        ];
+
+        foreach ($imagesData as $imageData) {
+            Image::create($imageData);
+        }
     }
 }

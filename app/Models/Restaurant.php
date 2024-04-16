@@ -20,4 +20,8 @@ class Restaurant extends Model
     public function cuisine(){
         return $this->belongsTo(Cuisine::class);
     }
+
+    public function offer(){
+        return $this->hasOne(Offer::class);
+    }
 }

@@ -2,38 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Car;
-use App\Models\Offer;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use App\Http\Resources\CarResource;
 
-class CarController extends Controller
+class OfferController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-
-    
     public function index()
     {
-        $cars = Car::all();
-        return CarResource::collection($cars);
+        //
     }
 
-    public function car_offers()
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        $offers = Offer::whereNotNull('car_id')->get();
-        $cars = [];
-        foreach ($offers as $offer) {
-            $offerWithImages = Offer::with('images')->find($offer->id)->images();
-            $car = Car::find($offer->car_id);
-            $cars[] = ['car' => $car, 'offer' => $offerWithImages];
-        }
-        return response()->json(['offers' => $offers,'cars' => $cars]);
+        //
     }
 
-
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         //

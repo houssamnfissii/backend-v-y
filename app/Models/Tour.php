@@ -36,7 +36,8 @@ class Tour extends Model
         return $this->belongsToMany(City::class);
     }
 
-
-
+    public function reservations(){
+        return $this->hasMany(Reservation::class);
+    }
 
 }
