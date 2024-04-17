@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\City;
 use App\Models\Offer;
 use App\Models\Cmodel;
 use App\Models\Reservation;
@@ -25,5 +26,9 @@ class Car extends Model
     public function reservations(){
         return $this->hasMany(Reservation::class);
     }
-
+    
+    public function city(){
+        return $this->belongsTo(City::class);
+    }
+    
 }

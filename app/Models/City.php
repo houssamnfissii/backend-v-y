@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Car;
 use App\Models\Tour;
 use App\Models\Hotel;
 use App\Models\Restaurant;
@@ -24,5 +25,9 @@ class City extends Model
 
     public function retaurants(){
         return $this->hasMany(Restaurant::class);
+    }
+
+    public function cars(){
+        return $this->hasMany(Car::class);
     }
 }

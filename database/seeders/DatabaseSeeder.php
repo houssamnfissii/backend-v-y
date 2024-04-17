@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Car;
 use App\Models\Cbrand;
+use App\Models\City;
 use App\Models\Client;
 use App\Models\Cmodel;
 use App\Models\Host;
@@ -27,6 +28,20 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
+        $citiesData = [
+            [
+                'name' => 'Tangier',
+            ],
+            
+            [
+                'name' => 'Rabat',
+            ],
+        ];
+
+        foreach ($citiesData as $cityData) {
+            City::create($cityData);
+        }
+
         $cbrandsData = [
             [
                 'name' => 'Brand 1',
@@ -40,6 +55,7 @@ class DatabaseSeeder extends Seeder
         foreach ($cbrandsData as $cbrandData) {
             Cbrand::create($cbrandData);
         }
+
 
         $cmodelsData = [
             [
@@ -59,20 +75,22 @@ class DatabaseSeeder extends Seeder
 
         $carsData = [
             [
-                'price_per_day' => 50.00,
+                'price_per_day' => 550.00,
                 'production_date' => '2022-01-01',
                 'fuel' => 'Essence',
-                'nbr_places' => 5,
+                'nbr_places' => 2+2,
                 'description' => 'Une voiture spacieuse et confortable.',
                 'cmodel_id' => 1,
+                'city_id' => 1,
             ],
             [
-                'price_per_day' => 60.00,
+                'price_per_day' => 460.00,
                 'production_date' => '2021-05-15',
                 'fuel' => 'Diesel',
                 'nbr_places' => 4,
                 'description' => 'Une voiture économique et fiable.',
                 'cmodel_id' => 2,
+                'city_id' => 2,
             ],
         ];
 
@@ -126,6 +144,17 @@ class DatabaseSeeder extends Seeder
             Host::create($hostData);
         }
 
+        $clientsData = [
+            [
+                'user_id' => 2
+            ]
+            
+        ];
+
+        foreach ($clientsData as $clientData) {
+            Client::create($clientData);
+        }
+
         
         $offersData = [
             [
@@ -148,20 +177,18 @@ class DatabaseSeeder extends Seeder
             Offer::create($offerData);
         }
 
-        $clientsData = [
-            [
-                'user_id' => 2
-            ]
-            
-        ];
-
-        foreach ($clientsData as $clientData) {
-            Client::create($clientData);
-        }
-
+        
         $imagesData = [
             [
                 'url' => '/assets/polestar-1.jpg',
+                'offer_id' => 1,
+            ],
+            [
+                'url' => '/assets/polestar-1-1.jpg',
+                'offer_id' => 1,
+            ],
+            [
+                'url' => '/assets/polestar-1-2.jpg',
                 'offer_id' => 1,
             ],
             [

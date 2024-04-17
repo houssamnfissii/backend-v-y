@@ -3,71 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\Cbrand;
+use App\Models\Cmodel;
 use App\Models\Offer;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use App\Http\Resources\CarResource;
 
 class CarController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
-    
     public function index()
     {
         $cars = Car::all();
-        return CarResource::collection($cars);
+        // return CarResource::collection($cars);
+        return response()->json(['data'=>$cars]);
     }
 
     public function car_offers()
     {
-        $offers = Offer::whereNotNull('car_id')->get();
+        $offers = Offer::whereNotNull('car_id')->with('images')->get();
         $cars = [];
         foreach ($offers as $offer) {
-            $offerWithImages = Offer::with('images')->find($offer->id)->images();
             $car = Car::find($offer->car_id);
-            $cars[] = ['car' => $car, 'offer' => $offerWithImages];
+            $model = Cmodel::find($car->cmodel_id);
+            $brand = Cbrand::find($model->cbrand_id);
+            $cars[] = ['car' => $car,'model'=> $model,'brand'=>$brand ,'offer' => $offer];
         }
-        return response()->json(['offers' => $offers,'cars' => $cars]);
+        return response()->json(['data' => ['cars' => $cars]])->header('Content-Type', 'application/json');
     }
 
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+    public function show($id){
+        $car = Car::findOrFail($id);
+        $model = Cmodel::find($car->cmodel_id);
+            $brand = Cbrand::find($model->cbrand_id);
+        $offer = Offer::where('car_id',$id)->with('images')->get();
+        return response()->json(['car'=>$car,'model'=> $model,'brand'=>$brand ,'offer'=>$offer]);
     }
 }

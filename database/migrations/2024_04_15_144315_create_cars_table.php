@@ -22,6 +22,8 @@ return new class extends Migration
 
             $table->unsignedBigInteger('cmodel_id');
             $table->foreign('cmodel_id')->references('id')->on('cmodels');
+            $table->unsignedBigInteger('city_id');
+            $table->foreign('city_id')->references('id')->on('cities');
         });
     }
 

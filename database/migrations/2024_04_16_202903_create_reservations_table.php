@@ -15,22 +15,24 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->date('reservation_date_restaurant');
-            $table->integer('nbr_people');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->date('reservation_date_restaurant')->nullable();
+            $table->string('car_pick_up_location')->nullable();
+            $table->string('car_drop_off_location')->nullable();
+            $table->integer('nbr_people')->nullable();
             $table->timestamps();
-            $table->UnsignedBigInteger('car_id');
+            $table->UnsignedBigInteger('car_id')->nullable();
             $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
-            $table->UnsignedBigInteger('table_id');
+            $table->UnsignedBigInteger('table_id')->nullable();
             $table->foreign('table_id')->references('id')->on('tables')->onDelete('cascade');
-            $table->UnsignedBigInteger('room_id');
+            $table->UnsignedBigInteger('room_id')->nullable();
             $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
-            $table->UnsignedBigInteger('tour_id');
+            $table->UnsignedBigInteger('tour_id')->nullable();
             $table->foreign('tour_id')->references('id')->on('tours')->onDelete('cascade');
             $table->UnsignedBigInteger('client_id');
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
-            $table->UnsignedBigInteger('bill_id');
+            $table->UnsignedBigInteger('bill_id')->nullable();
             $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
         });
     }

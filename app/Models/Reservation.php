@@ -14,7 +14,7 @@ class Reservation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['start_date','end_date','nbr_people'];
+    protected $fillable = ['start_date','end_date','nbr_people','reservation_date_restaurant'];
 
     public function client()
     {
