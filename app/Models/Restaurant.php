@@ -24,4 +24,8 @@ class Restaurant extends Model
     public function offer(){
         return $this->hasOne(Offer::class);
     }
+
+    public function tables(){
+        return $this->hasMany(Table::class);
+    }
 }

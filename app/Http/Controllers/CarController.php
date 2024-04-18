@@ -23,17 +23,23 @@ class CarController extends Controller
         $cars = [];
         foreach ($offers as $offer) {
             $car = Car::find($offer->car_id);
-            $model = Cmodel::find($car->cmodel_id);
-            $brand = Cbrand::find($model->cbrand_id);
-            $cars[] = ['car' => $car,'model'=> $model,'brand'=>$brand ,'offer' => $offer];
+            if($car){
+                $car->model_name = $car->cmodel->name;
+                $car->brand_name = Cbrand::find($car->cmodel->cbrand_id)->name;
+                $car->city_name = $car->city->name;
+                $cars[] = ['car' => $car ,'offer' => $offer];
+            }
+            // $model = Cmodel::find($car->cmodel_id);
+            // $brand = Cbrand::find($model->cbrand_id);
+            
         }
-        return response()->json(['data' => ['cars' => $cars]])->header('Content-Type', 'application/json');
+        return response()->json(['data' =>  $cars])->header('Content-Type', 'application/json');
     }
 
     public function show($id){
         $car = Car::findOrFail($id);
         $model = Cmodel::find($car->cmodel_id);
-            $brand = Cbrand::find($model->cbrand_id);
+        $brand = Cbrand::find($model->cbrand_id);
         $offer = Offer::where('car_id',$id)->with('images')->get();
         return response()->json(['car'=>$car,'model'=> $model,'brand'=>$brand ,'offer'=>$offer]);
     }

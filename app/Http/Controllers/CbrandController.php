@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class CbrandController extends Controller
 {
     public function index(){
-        $brands = Cbrand::all();
+        $brands = Cbrand::pluck('name');
         return response()->json(['brands'=>$brands]);
     }
 }

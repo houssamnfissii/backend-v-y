@@ -9,7 +9,7 @@ class CmodelController extends Controller
 {
     public function index()
     {
-        $models = Cmodel::all();
+        $models = Cmodel::pluck('name');
         return response()->json(['models' => $models]);
     }
     public function findBrand($id)

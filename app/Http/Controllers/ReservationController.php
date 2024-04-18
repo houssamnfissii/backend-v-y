@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Reservation;
+use App\Models\Table;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -45,5 +46,23 @@ class ReservationController extends Controller
         $reservation = Reservation::find($reservationId);
 
         return response()->json(['message'=>'Réservation ajoutée','reservation'=>$reservation]);
+    }
+
+    public function storeTableReservation(Request $request){
+        $tables = Table::where('restaurant_id',$request->id)->where('type',$request->type)->get();
+        foreach($tables as $table){
+            $reservation = Reservation::where('table_id',$table->id)->where('reservation_date_restaurant',$request->date)->exists();
+            if(!$reservation){
+                Reservation::insert([
+                    'table_id' => $table->id,
+                    'reservation_date_restaurant' => $request->date,
+                    'client_id' => 1, //auth()->id()
+                    'created_at' => now(), 
+                    'updated_at' => now(), 
+                ]);
+                return response()->json(['message'=>'Réservation ajoutée']);
+            }
+        }
+        return response()->json(['message'=>'Pas de table disponible']);
     }
 }

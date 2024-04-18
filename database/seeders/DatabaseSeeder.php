@@ -8,9 +8,12 @@ use App\Models\Cbrand;
 use App\Models\City;
 use App\Models\Client;
 use App\Models\Cmodel;
+use App\Models\Cuisine;
 use App\Models\Host;
 use App\Models\Image;
 use App\Models\Offer;
+use App\Models\Restaurant;
+use App\Models\Table;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -67,6 +70,10 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Modèle 2',
                 'cbrand_id' => 2,
             ],
+            [
+                'name' => 'Modèle 3',
+                'cbrand_id' => 2,
+            ],
         ];
 
         foreach ($cmodelsData as $cmodelData) {
@@ -79,7 +86,7 @@ class DatabaseSeeder extends Seeder
                 'production_date' => '2022-01-01',
                 'fuel' => 'Essence',
                 'nbr_places' => 2+2,
-                'description' => 'Une voiture spacieuse et confortable.',
+                'description' => 'Une voiture luxueuse et fiable.',
                 'cmodel_id' => 1,
                 'city_id' => 1,
             ],
@@ -88,9 +95,18 @@ class DatabaseSeeder extends Seeder
                 'production_date' => '2021-05-15',
                 'fuel' => 'Diesel',
                 'nbr_places' => 4,
-                'description' => 'Une voiture économique et fiable.',
+                'description' => 'Une voiture luxueuse et spacieuse.',
                 'cmodel_id' => 2,
                 'city_id' => 2,
+            ],
+            [
+                'price_per_day' => 200.00,
+                'production_date' => '2008-10-10',
+                'fuel' => 'Diesel',
+                'nbr_places' => 4,
+                'description' => 'Une voiture économique et fiable.',
+                'cmodel_id' => 3,
+                'city_id' => 1,
             ],
         ];
 
@@ -155,20 +171,108 @@ class DatabaseSeeder extends Seeder
             Client::create($clientData);
         }
 
+        $cuisinesData = [
+            [
+                'name' => 'marocaine',
+            ],
+            [
+                'name' => 'italienne',
+            ],
+            [
+                'name' => 'chinoise',
+            ],
+            [
+                'name' => 'mexicaine',
+            ]
+            
+        ];
+
+        foreach ($cuisinesData as $cuisineData) {
+            Cuisine::create($cuisineData);
+        }
+
+        $restaurantsData = [
+            [
+                'name' => 'Pallermo',
+                'description' => '............................',
+                'nbr_tables' => 16,
+                'cuisine_id' => 2,
+                'city_id' => 1
+            ],
+            [
+                'name' => 'Chihuahua',
+                'description' => '............................',
+                'nbr_tables' => 18,
+                'cuisine_id' => 4,
+                'city_id' => 1
+            ],
+            [
+                'name' => 'Dar Naji',
+                'description' => '............................',
+                'nbr_tables' => 20,
+                'cuisine_id' => 1,
+                'city_id' => 2
+            ],
+            [
+                'name' => 'Dar Tazi',
+                'description' => '............................',
+                'nbr_tables' => 24,
+                'cuisine_id' => 1,
+                'city_id' => 2
+            ],
+            
+            
+        ];
+
+        foreach ($restaurantsData as $restaurantData) {
+            Restaurant::create($restaurantData);
+        }
         
         $offersData = [
             [
                 'description' => "description",
-                'type' => 'car 1',
+                'type' => 'car',
                 'host_id' => 1,
                 'car_id' => 1
             ],
             
             [
                 'description' => "description",
-                'type' => 'car 2',
+                'type' => 'car',
                 'host_id' => 1,
                 'car_id' => 2
+            ],
+            [
+                'description' => "description",
+                'type' => 'car',
+                'host_id' => 1,
+                'car_id' => 3
+            ],
+            [
+                'description' => "description restaurant 1",
+                'type' => 'restaurant',
+                'host_id' => 1,
+                'restaurant_id' => 1
+            ],
+            
+            [
+                'description' => "description restaurant 2",
+                'type' => 'restaurant',
+                'host_id' => 1,
+                'restaurant_id' => 2
+            ],
+            [
+                'description' => "description restaurant3",
+                'type' => 'restaurant',
+                'host_id' => 1,
+                'restaurant_id' => 3
+            ],
+            
+            [
+                'description' => "description",
+                'type' => 'restaurant',
+                'host_id' => 1,
+                'restaurant_id' => 4
             ],
             
         ];
@@ -188,18 +292,48 @@ class DatabaseSeeder extends Seeder
                 'offer_id' => 1,
             ],
             [
-                'url' => '/assets/polestar-1-2.jpg',
-                'offer_id' => 1,
-            ],
-            [
                 'url' => '/assets/car2.jpg',
                 'offer_id' => 2,
+            ],
+            [
+                'url' => '/assets/mercedes-2005.jpg',
+                'offer_id' => 3,
             ]
             
         ];
 
         foreach ($imagesData as $imageData) {
             Image::create($imageData);
+        }
+
+        
+
+        
+
+        $tablesData = [
+            [
+                'type' => 'table à 4',
+                'restaurant_id' => 1
+            ],
+            
+            [
+                'type' => 'table à 2',
+                'restaurant_id' => 1
+            ],
+            
+            [
+                'type' => 'table à 4',
+                'restaurant_id' => 1
+            ],
+            
+            [
+                'type' => 'table à 2',
+                'restaurant_id' => 2
+            ],    
+        ];
+
+        foreach ($tablesData as $tableData) {
+            Table::create($tableData);
         }
     }
 }
