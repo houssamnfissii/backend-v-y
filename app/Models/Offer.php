@@ -16,7 +16,7 @@ class Offer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['description','type'];
+    protected $fillable = ['type'];
 
 
     public function host(){

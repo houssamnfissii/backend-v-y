@@ -13,6 +13,6 @@ class Activity extends Model
     protected $fillable=['name','description'];
 
     public function tours(){
-        return $this->belongsToMany(Tour::class);
+        return $this->belongsTo(Tour::class);
     }
 }

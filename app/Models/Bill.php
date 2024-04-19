@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Bill extends Model
 {
     use HasFactory;
+    protected $fillable = ['total','host_id'];
 
     public function host()
     {

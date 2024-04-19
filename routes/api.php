@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\NewController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BillController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CbrandController;
@@ -19,11 +20,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-// Route::post('/login',[AuthController::class,'login']);
-// Route::post('/register',[AuthController::class,'register']);
-// Route::post('/logout',[AuthController::class,'logout']);
+Route::post("/register",[\App\Http\Controllers\AuthController::class,"register"]);
+Route::post("/login",[\App\Http\Controllers\AuthController::class,"login"]);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, "logout"]);
+});
 
-
+Route::get('bills',[BillController::class,'event']);
 
 Route::get('cars/car_offers',[CarController::class,'car_offers']);
 Route::get('cars/{id}',[CarController::class,'show']);
@@ -31,7 +34,7 @@ Route::get('cbrands',[CbrandController::class,'index']);
 Route::get('cmodels',[CmodelController::class,'index']);
 Route::get('cmodels/findBrand/{id}',[CmodelController::class,'findBrand']);
 Route::get('cities',[CityController::class,'index']);
-Route::post('reservations',[ReservationController::class,'store']);
+Route::post('reservations/store_car', [ReservationController::class,"storeCarReservation"]);
 
 
 Route::get('/restaurants/{id}/table-types', [RestaurantController::class, 'getTableTypes']);
@@ -39,6 +42,5 @@ Route::get('/cuisines/cuisines/cuisines', [RestaurantController::class,"getCuisi
 Route::get('/restaurants/restaurant_offers', [RestaurantController::class,"restaurant_offers"]);
 Route::get('/cities', [RestaurantController::class,"getCities"]);
 Route::get('/restaurants/{id}', [RestaurantController::class,"show"]);
-Route::post('/reservations', [RestaurantController::class,"store"]);
 Route::post('/reservations/store_table',[ReservationController::class,'storeTableReservation']);
 

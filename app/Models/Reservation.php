@@ -6,6 +6,7 @@ use App\Models\Car;
 use App\Models\Bill;
 use App\Models\Room;
 use App\Models\Tour;
+use App\Models\Offer;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,8 @@ class Reservation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['start_date','end_date','nbr_people','reservation_date_restaurant'];
+    protected $fillable = ['start_date','end_date','nbr_people','reservation_date_restaurant',
+    'car_pick_up_location','car_drop_off_location','billed'];
 
     public function client()
     {
@@ -38,9 +40,9 @@ class Reservation extends Model
         return $this->belongsTo(Tour::class);
     }
 
-    // public function offer(){
-    //     return $this->belongsTo(Offer::class);
-    // }
+    public function offer(){
+        return $this->belongsTo(Offer::class);
+    }
 
     public function bill(){
         return $this->belongsTo(Bill::class);

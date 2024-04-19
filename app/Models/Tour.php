@@ -29,7 +29,7 @@ class Tour extends Model
     }
 
     public function activities(){
-        return $this->belongsToMany(Activity::class);
+        return $this->hasMany(Activity::class);
     }
 
     public function cities(){

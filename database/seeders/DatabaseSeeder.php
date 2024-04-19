@@ -116,31 +116,19 @@ class DatabaseSeeder extends Seeder
 
         $usersData = [
             [
-                'CIN' => 'CD123456',
-                'first_name' => 'Youssra',
-                'last_name' => 'Benmimoun',
+                'image' => '',
                 'email' => 'youssra.benmimou@gmail.com',
                 'password' => '123',
-                'type' => 'user',
-                'address' => 'bit',
-                'telephone' => '0123456789',
-                'city' => 'Tanger',
-                'country' => 'Maroc',
-                'birth_date' => '1998-08-11'
+                'type' => 'client',
+                'status' => 0
             ],
             
             [
-                'CIN' => 'CD654321',
-                'first_name' => 'Aida',
-                'last_name' => 'Benmimoun',
+                'image' => '',
                 'email' => 'aida.benmimou@gmail.com',
                 'password' => '123',
-                'type' => 'user',
-                'address' => 'bit',
-                'telephone' => '0123456789',
-                'city' => 'Tanger',
-                'country' => 'Maroc',
-                'birth_date' => '2000-06-06'
+                'type' => 'host',
+                'status' => 0
             ],
             
         ];
@@ -151,6 +139,12 @@ class DatabaseSeeder extends Seeder
 
         $hostsData = [
             [
+                'CIN' => 'CD654321',
+                'first_name' => 'Aida',
+                'last_name' => 'Benmimoun',
+                'address' => 'bit',
+                'telephone' => '0123456789',
+                'birth_date' => '2000-06-06',
                 'user_id' => 1
             ]
             
@@ -162,6 +156,11 @@ class DatabaseSeeder extends Seeder
 
         $clientsData = [
             [
+                'first_name' => 'Youssra',
+                'last_name' => 'Benmimoun',
+                'address' => 'bit',
+                'telephone' => '0123456789',
+                'birth_date' => '1998-08-11',
                 'user_id' => 2
             ]
             
@@ -230,46 +229,39 @@ class DatabaseSeeder extends Seeder
         
         $offersData = [
             [
-                'description' => "description",
                 'type' => 'car',
                 'host_id' => 1,
                 'car_id' => 1
             ],
             
             [
-                'description' => "description",
                 'type' => 'car',
                 'host_id' => 1,
                 'car_id' => 2
             ],
             [
-                'description' => "description",
                 'type' => 'car',
                 'host_id' => 1,
                 'car_id' => 3
             ],
             [
-                'description' => "description restaurant 1",
                 'type' => 'restaurant',
                 'host_id' => 1,
                 'restaurant_id' => 1
             ],
             
             [
-                'description' => "description restaurant 2",
                 'type' => 'restaurant',
                 'host_id' => 1,
                 'restaurant_id' => 2
             ],
             [
-                'description' => "description restaurant3",
                 'type' => 'restaurant',
                 'host_id' => 1,
                 'restaurant_id' => 3
             ],
             
             [
-                'description' => "description",
                 'type' => 'restaurant',
                 'host_id' => 1,
                 'restaurant_id' => 4

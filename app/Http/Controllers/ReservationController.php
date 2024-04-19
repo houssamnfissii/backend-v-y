@@ -10,7 +10,7 @@ use Illuminate\Http\Response;
 
 class ReservationController extends Controller
 {
-    public function store(Request $request)
+    public function storeCarReservation(Request $request)
     {
         $id = $request->id;
         $location = $request->location;
@@ -39,6 +39,7 @@ class ReservationController extends Controller
             'car_drop_off_location' => $location,
             'car_id' => $id,
             'client_id' => 1, //auth()->id()
+            'offer_id' => $request->offer_id,
             'created_at' => now(), 
             'updated_at' => now(), 
         ]);

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('car_pick_up_location')->nullable();
             $table->string('car_drop_off_location')->nullable();
             $table->integer('nbr_people')->nullable();
+            $table->boolean('billed')->default(false);
             $table->timestamps();
             $table->UnsignedBigInteger('car_id')->nullable();
             $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
@@ -34,6 +35,8 @@ return new class extends Migration
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
             $table->UnsignedBigInteger('bill_id')->nullable();
             $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
+            $table->UnsignedBigInteger('offer_id');
+            $table->foreign('offer_id')->references('id')->on('offers');
         });
     }
 

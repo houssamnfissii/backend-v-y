@@ -2,67 +2,67 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use App\Traits\HttpResponses;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\StoreUserRequest;
-use Illuminate\Validation\Rules\Password;
+use App\Models\User;
+use App\Http\Requests\AuthRequest;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    use HttpResponses;
+   
 
-    public function login()
-    {
-        return 'HEY';
+public function register(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|min:5|max:15|regex:/^(?=.[a-z])(?=.[A-Z]).+$/',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 422);
     }
 
-    // public function register(StoreUserRequest $request){
-    //     $request ->validated($request->all());
-    //     $user = User::create([
-    //         "name" => $request->name,
-    //         "email" => $request->email,
-    //         'password' => Hash::make($request->password)
-    //     ]);
-    //     return $this->success([
-    //         'user' => $user,
-    //         'token' => $user->createToken('API Token of '.$user->name)->plainTextToken
-    //     ]);
-    // }
-    public function register(Request $request)
-    {
-        if (empty($request->all())) {
-            return response()->json(['error' => 'No data provided.'], 422);
+    $user = User::create([
+        'name' => $request->input('name'),
+        'email' => $request->input('email'),
+        'password' => Hash::make($request->input('password')),
+    ]);
+
+    return response()->json(['message' => 'User registered successfully', 'user' => $user]);
+}
+
+    public function login(Request $request){
+        if (!Auth::attempt($request->only('email','password'))) {
+            return response([
+                'message' => 'Invalid credentials'
+            ], Response::HTTP_UNAUTHORIZED);
         }
     
-        $validatedData = $request->validate([
-            'name' => ['required','string','max:255'],
-            'email' => ['required','string','max:255','unique:users'],
-            'password' => ['required','confirmed',Password::defaults()]
-        ]);
+        $user = Auth::user();
+        $token = $user->createToken('token')->plainTextToken;
+    
+        $cookie = cookie('jwt', $token, 60 * 24);
+    
+        return response([
+            'message' => 'success',
+            'token' => $token 
+        ])->withCookie($cookie);
+    }
 
-        $user = User::create([
-            "name" => $validatedData['name'],
-            "email" => $validatedData['email'],
-            'password' => Hash::make($validatedData['password'])
-        ]);
-
-        $token = $user->createToken('API Token of ' . $user->name)->plainTextToken;
+    public function logout(Request $request){
+        //auth()->user()->tokens()->delete();
+        $cookie=Cookie::forget('jwt');
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'User registered successfully.',
-            'data' => [
-                'user' => $user,
-                'token' => $token
-            ]
-        ], 201);
-    }
+            'message'=>'Success'
+        ],200);
 
-
-    public function logout()
-    {
-        return response()->json("logout");
     }
+    
 }

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Client extends Model
 {
     use HasFactory;
+    protected $fillable = ['first_name','last_name','address','telephone','birth_date'];
 
     public function user()
     {
