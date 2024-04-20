@@ -50,7 +50,7 @@ class User extends Authenticatable
         return $this->hasOne(Client::class);
     }
 
-    public function Host(){
+    public function host(){
         return $this->hasOne(Host::class);
     }
 }

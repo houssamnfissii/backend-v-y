@@ -20,8 +20,8 @@ class MonthlyBillingListener implements ShouldQueue
     {
         $reservations_by_host = Reservation::join('offers', 'reservations.offer_id', '=', 'offers.id')
             ->select('offers.host_id', DB::raw('count(*) as reservation_count'))
-            ->whereMonth('reservations.created_at', now()->month)
-            ->whereYear('reservations.created_at', now()->year)
+            ->whereMonth('reservations.start_date', now()->month-1)
+            ->whereYear('reservations.start_date', now()->year)
             ->groupBy('offers.host_id')
             ->get();
 
@@ -42,6 +42,6 @@ class MonthlyBillingListener implements ShouldQueue
             $host = User::find($host_id); 
             $host->notify(new BillNotification($bill));
         }
-        info("Reservation of " + now()->month + "/" + now()->year + " billed");
+        info("Reservation of " + now()->month-1 + "/" + now()->year + " billed");
     }
 }

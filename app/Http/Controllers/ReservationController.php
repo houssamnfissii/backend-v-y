@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\Reservation;
+use App\Models\Room;
 use App\Models\Table;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -28,7 +29,7 @@ class ReservationController extends Controller
                 });
             })
             ->exists();
-        if($car_exists){
+        if ($car_exists) {
             return response()->json(['message' => 'La voiture est déjà réservée'], Response::HTTP_CONFLICT);
         }
 
@@ -40,30 +41,63 @@ class ReservationController extends Controller
             'car_id' => $id,
             'client_id' => 1, //auth()->id()
             'offer_id' => $request->offer_id,
-            'created_at' => now(), 
-            'updated_at' => now(), 
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $reservation = Reservation::find($reservationId);
 
-        return response()->json(['message'=>'Réservation ajoutée','reservation'=>$reservation]);
+        return response()->json(['message' => 'Réservation ajoutée', 'reservation' => $reservation]);
     }
 
-    public function storeTableReservation(Request $request){
-        $tables = Table::where('restaurant_id',$request->id)->where('type',$request->type)->get();
-        foreach($tables as $table){
-            $reservation = Reservation::where('table_id',$table->id)->where('reservation_date_restaurant',$request->date)->exists();
-            if(!$reservation){
+    public function storeTableReservation(Request $request)
+    {
+        $tables = Table::where('restaurant_id', $request->id)->where('type', $request->type)->get();
+        foreach ($tables as $table) {
+            $reservation = Reservation::where('table_id', $table->id)->where('reservation_date_restaurant', $request->date)->exists();
+            if (!$reservation) {
                 Reservation::insert([
                     'table_id' => $table->id,
                     'reservation_date_restaurant' => $request->date,
                     'client_id' => 1, //auth()->id()
-                    'created_at' => now(), 
-                    'updated_at' => now(), 
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
-                return response()->json(['message'=>'Réservation ajoutée']);
+                return response()->json(['message' => 'Réservation ajoutée']);
             }
         }
-        return response()->json(['message'=>'Pas de table disponible']);
+        return response()->json(['message' => 'Pas de table disponible']);
+    }
+
+    public function storeRoomReservation(Request $request)
+    {
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        $rooms = Room::where('hotel_id', $request->hotel_id)->where('roomtype_id', $request->roomtype_id)->get();
+        foreach ($rooms as $room) {
+            $reservation = Reservation::where('room_id', $room->id)
+            ->where(function ($query) use ($start_date, $end_date) {
+                $query->where(function ($q) use ($start_date) {
+                    $q->where('start_date', '<=', $start_date)
+                        ->where('end_date', '>=', $start_date);
+                })->orWhere(function ($q) use ($end_date) {
+                    $q->where('start_date', '<=', $end_date)
+                        ->where('end_date', '>=', $end_date);
+                });
+            })
+            ->exists();
+
+            if (!$reservation) {
+                Reservation::insert([
+                    'room_id' => $room->id,
+                    'offer_id' => $request->offer_id,
+                    'start_date' => $start_date,
+                    'end_date' => $end_date,
+                    'client_id' => 1
+                ]);
+                return response()->json(['message' => 'Réservation insérée']);
+            }
+        }
+        return response()->json(['message' => "Pas de chambres de ce type disponible !"]);
     }
 }

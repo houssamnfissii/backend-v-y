@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-   
+    public function user()
+    {
+        return Auth::user() ;
+    }
 
 public function register(Request $request)
 {
@@ -60,7 +63,7 @@ public function register(Request $request)
         $cookie=Cookie::forget('jwt');
 
         return response()->json([
-            'message'=>'Success'
+            'message'=>'Success !'
         ],200);
 
     }
