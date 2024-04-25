@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Client;
+
 use App\Http\Requests\AuthRequest;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Auth;
@@ -14,32 +16,31 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function user()
+   
+    public function register(Request $request)
     {
-        return Auth::user() ;
+        $user = User::create([
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'type' => "client",
+            'status' => '1'
+        ]);
+    
+        $userId = $user->id;
+    
+        $client= Client::create([
+            'user_id' => $userId,
+            'first_name' => $request->input('first_name'),
+            'birth_date' => $request->input('birth_date'),
+            'address' => $request->input('address'),
+            'last_name' => $request->input('last_name'),
+            'telephone' => $request->input('telephone'),
+
+        ]);
+    
+        return response()->json(['message' => 'User registered successfully', 'user' => $user]);
     }
-
-public function register(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|min:5|max:15|regex:/^(?=.[a-z])(?=.[A-Z]).+$/',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json(['error' => $validator->errors()], 422);
-    }
-
-    $user = User::create([
-        'name' => $request->input('name'),
-        'email' => $request->input('email'),
-        'password' => Hash::make($request->input('password')),
-    ]);
-
-    return response()->json(['message' => 'User registered successfully', 'user' => $user]);
-}
-
+    
     public function login(Request $request){
         if (!Auth::attempt($request->only('email','password'))) {
             return response([
@@ -49,21 +50,33 @@ public function register(Request $request)
     
         $user = Auth::user();
         $token = $user->createToken('token')->plainTextToken;
+        $cookie = cookie('jwt', $token, 30 * 24 * 60);
     
-        $cookie = cookie('jwt', $token, 60 * 24);
+       if($user->type=='host'){
+        $username = $user->host->first_name . ' ' . $user->host->last_name;
+       }else{
+        $username = $user->client->first_name . ' ' . $user->client->last_name;
+       }
+        $userType = $user->type;
+        $userImage= $user->image;
     
         return response([
             'message' => 'success',
-            'token' => $token 
+            'token' => $token,
+            'username' => $username,
+            'userType' => $userType,
+            'userImage' => $userImage,
+            'userType' => $user->type 
         ])->withCookie($cookie);
     }
-
+    
+    
     public function logout(Request $request){
-        //auth()->user()->tokens()->delete();
+        // auth()->user()->tokens()->delete();
         $cookie=Cookie::forget('jwt');
 
         return response()->json([
-            'message'=>'Success !'
+            'message'=>'Success'
         ],200);
 
     }

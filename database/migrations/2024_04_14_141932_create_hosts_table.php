@@ -17,8 +17,9 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('address');
+            $table->string('image')->nullable();
             $table->string('company_name')->nullable();
-            $table->string('telephone');
+            $table->string('telephone')->nullable();
             $table->date('birth_date');
             $table->timestamps();
             $table->unsignedBigInteger('user_id');
