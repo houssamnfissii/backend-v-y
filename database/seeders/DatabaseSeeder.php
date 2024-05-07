@@ -239,8 +239,6 @@ class DatabaseSeeder extends Seeder
                 'address' => ' Tanger City Center Place du Maghreb, 90000 Tangier, Morocco',
                 'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 'nbr_stars' => 5,
-                'latitude' => 51.5074,
-                'longitude' => -0.1278,
                 'city_id' => 1,
             ],
             [
@@ -248,8 +246,6 @@ class DatabaseSeeder extends Seeder
                 'address' => ' Rte de Malabata, Tanger 90000, Morocco ',
                 'description' => 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
                 'nbr_stars' => 5,
-                'latitude' => 40.7128,
-                'longitude' => -74.0060,
                 'city_id' => 1,
             ],
             [
@@ -257,8 +253,6 @@ class DatabaseSeeder extends Seeder
                 'address' => ' PLACE 16 NOVEMBRE, Bd Mohamed Lyazidi, Rabat 10000, Morocco',
                 'description' => 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
                 'nbr_stars' => 5,
-                'latitude' => 40.7128,
-                'longitude' => -74.0060,
                 'city_id' => 2,
             ],
             [
@@ -266,8 +260,6 @@ class DatabaseSeeder extends Seeder
                 'address' => ' Av. Echouhada, Marrakech 40000, Morocco',
                 'description' => 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
                 'nbr_stars' => 5,
-                'latitude' => 40.7128,
-                'longitude' => -74.0060,
                 'city_id' => 3,
             ],
 

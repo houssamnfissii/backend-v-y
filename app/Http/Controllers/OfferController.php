@@ -27,6 +27,8 @@ use App\Models\Transporation;
 
 
 use App\Models\Host;
+use App\Models\Image;
+use App\Models\Reservation;
 use App\Models\Table;
 
 
@@ -41,101 +43,96 @@ class OfferController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($hostId)
+    public function index(Request $request)
     {
-        // Récupérer l'hôte associé à l'ID fourni
-        $hostId=6;
-        $host = Host::findOrFail($hostId);
+        $user = $request->user();
     
-        // Récupérer les offres de cet hôte avec les images associées
-        $offers = $host->offers()->with('images')->get();
+        if ($user) {
+            if ($user->host) {
+                $hostId = $user->host->id;
+                $offers = Offer::where('host_id', $hostId)
+                                ->with(['images', 'car.cmodel.cbrand', 'hotel.rooms.roomtype','car.city','hotel.city','tour.cities','tour.transportations',
+                                'tour.staffs','tour.activities',
+                                'restaurant.city',
+                                'restaurant.cuisine',
+                                'restaurant.tables'
+                                
+                                
+                                ]) 
+                                ->get();
     
-        // Retourner les offres en tant que réponse JSON
-        return response()->json($offers);
+                return response()->json($offers);
+            } else {
+                return response()->json(['message' => 'Vous n\'êtes pas un hôte.'], 403);
+            }
+        } else {
+            return response()->json(['message' => 'Utilisateur non authentifié.'], 401);
+        }
     }
     
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+
+
+    public function storeHotel(Request $request)
     {
-        //
+        
+            $host = Auth::user()->host;
+            $hotelData = $request->input('hotel');
+            $roomsData = $request->input('rooms');
+        
+        
+        
+        $hotel = Hotel::create([
+            'name' => $hotelData['name'],
+            'address' => $hotelData['address'],
+            'nbr_stars' => $hotelData['nbr_stars'], 
+            'description' => $hotelData['description'],
+            'city_id' =>  $hotelData['city_name'],
+        ]);
+    
+        $createdRooms = [];
+    
+        foreach ($roomsData as $roomData) {
+            $roomType = Roomtype::where('name', $roomData['typeRoName'])->firstOrFail();
+    
+            for ($i = 0; $i < $roomData['quantity']; $i++) {
+                $room = Room::create([
+                    'hotel_id' => $hotel->id,
+                    'roomtype_id' => $roomType->id,
+                    'nbr_beds' => $roomData['nbrBeds'],
+                    'price_per_night' => $roomData['priceDay'],
+                    'description' => $roomData['descriptionRo'],
+                ]);
+    
+                $createdRooms[] = $room;
+            }
+        }
+    
+        $offer = Offer::create([
+            'type' => "Hotel",
+            'hotel_id' => $hotel->id,
+            'host_id' => $host->id, 
+        ]);
+    
+        return response()->json([
+            'hotel' => $hotel,
+            'rooms' => $createdRooms,
+            'offer' => $offer,
+        ], 201);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
-     public function storeHotel(Request $request)
-     {
-         //$hostId = Auth::user()->host->id;
-     
-         $hotelData = $request->input('hotel');
-         $type = $request->input('type');
-         $roomsData = $request->input('rooms');
-     
-         $city = City::where('name', $hotelData['city_name'])->firstOrFail();
-     
-         $hotel = Hotel::create([
-             'name' => $hotelData['name'],
-             'address' => $hotelData['address'],
-             'nbr_stars' => $hotelData['nbr_stars'], 
-             'description' => $hotelData['description'],
-             'city_id' => $city->id,
-         ]);
-     
-         $createdRooms = [];
-     
-         foreach ($roomsData as $roomData) {
-             $roomType = Roomtype::where('name', $roomData['typeRoName'])->firstOrFail();
-     
-             $room = Room::create([
-                 'hotel_id' => $hotel->id,
-                 'roomtype_id' => $roomType->id,
-                 'nbr_beds' => $roomData['nbrBeds'],
-                 'price_per_night' => $roomData['priceDay'],
-                 'description' => $roomData['descriptionRo'],
-             ]);
-     
-             $createdRooms[] = $room;
-         }
-     
-         $offer = Offer::create([
-             'type' => $type,
-             'hotel_id' => $hotel->id,
-             'host_id' => '6', 
-         ]);
-     
-         return response()->json([
-             'hotel' => $hotel,
-             'rooms' => $createdRooms,
-             'offer' => $offer
-         ], 201);
-     }
-     
-
-
-
-
-
-
-
-
+    
 
 
      public function storeTour(Request $request)
      {
+        $host = Auth::user()->host;
+
          $tourData = $request->input('tours');
          $staffData = $request->input('staffs');
          $transData = $request->input('transportations');
          $actvData = $request->input('activities');
-         $type = $request->input('type');
+         
      
          $tour = Tour::create([
              'name' => $tourData['name'],
@@ -184,155 +181,190 @@ class OfferController extends Controller
          }
      
          $offer = Offer::create([
-             'type' => $type,
+             'type' => "Tour",
              'tour_id' => $tour->id,
-             'host_id' => 5, 
+             'host_id' => $host->id, 
          ]);
      
          return response()->json($offer, 201);
      }
+
+  
+
+     public function storeCar(Request $request)
+     {
+         if (Auth::check()) {
+             $user = Auth::user();
+     
+             if ($user->host) {
+                 $carData = $request->input('car');
+                 $typeOff = $request->input('type');
+     
+                 $car = new Car();
+                 $car->cmodel_id = $carData['model_id'];
+                 $car->price_per_day = $carData['priceDay'];
+                 $car->production_date = $carData['production_date'];
+                 $car->fuel = $carData['fuel'];
+                 $car->nbr_places = $carData['nbrPlace'];
+                 $car->description = $carData['description'];
+                 $car->city_id = $carData['city_id'];
+                 $car->save();
+
+                 
+                 
+                 // Create the offer
+                 $offer = Offer::create([
+                     'type' => $typeOff,
+                     'car_id' => $car->id,
+                     'host_id' => $user->host->id,
+                 ]);
      
 
+     
+                 return response()->json($car);
+             } else {
+                 return response()->json(['error' => 'Vous n\'êtes pas un hôte.'], 403);
+             }
+         } else {
+             return response()->json(['error' => 'Utilisateur non authentifié.'], 401);
+         }
+     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   public function storeCar(Request $request)
-    {
-        $carData = $request->input('car');
-        $typeOff = $request->input('type');
-      
-        $car = new Car();
-        $car->cmodel_id = $carData['cmodel_id'];
-        $car->price_per_day = $carData['priceDay'];
-        $car->production_date = $carData['production_date'];
-        $car->fuel = $carData['fuel'];
-        $car->nbr_places = $carData['nbrPlace'];
-        $car->description = $carData['description'];
-        $car->city_id = $carData['city_id'];
-        $car->save();
-           $offer = Offer::create([
-            'type' => $typeOff,
-            'car_id' => $car->id,
-            'host_id' => '5', 
-        ]);
-
-        return response()->json($car);
-    }
-
-    
-
-    public function storeRestu(Request $request)
+     public function storeRestu(Request $request)
+     {
+         // Check if user is authenticated
+         if (!Auth::check()) {
+             return response()->json(['message' => 'Unauthenticated'], 401);
+         }
+     
+         // Now it's safe to access the authenticated user
+         $user = Auth::user();
+     
+         // Check if the authenticated user is a host
+         if (!$user->host) {
+             return response()->json(['message' => 'User is not a host'], 403);
+         }
+     
+         $cuisine = Cuisine::where('name', $request->input('restaurant.cuisine_name'))->firstOrFail();
+         $city = City::where('name', $request->input('restaurant.city_name'))->firstOrFail();
+     
+         $restaurant = Restaurant::create([
+             'name' => $request->input('restaurant.name'),
+             'address' => $request->input('restaurant.address'),
+             'cuisine_id' => $cuisine->id,
+             'city_id' => $city->id,
+             'description' => $request->input('restaurant.description'),
+         ]);
+     
+         $createdTables = [];
+         $nbr_tables= 0;
+     
+         if ($request->has('table_type') && $request->has('table_quantity')) {
+             foreach ($request->input('table_type') as $index => $tableType) {
+                 $tableQuantity = $request->input('table_quantity')[$index];
+     
+                 for ($i = 0; $i < $tableQuantity; $i++) {
+                     $table = Table::create([
+                         'type' => $tableType,
+                         'restaurant_id' => $restaurant->id,
+                     ]);
+                     $createdTables[] = $table;
+                 }
+                 $nbr_tables += $tableQuantity;
+             }
+         }
+     
+         // Update nbr_places field before creating the offer
+         $restaurant->nbr_tables = $nbr_tables;
+         $restaurant->save();
+     
+         // Create the offer associated with the restaurant and host
+         $offer = Offer::create([
+             'type' =>'Restaurant',
+             'restaurant_id' => $restaurant->id,
+             'host_id' => $user->host->id,
+         ]);
+     
+         return response()->json([
+             'restaurant' => $restaurant,
+             'tables' => $createdTables,
+             'offer' => $offer
+         ], 201);
+     }
+public function destroy($id)
 {
-    $cuisine = Cuisine::where('name', $request->input('restaurant.cuisine_name'))->firstOrFail();
-    $city = City::where('name', $request->input('restaurant.city_name'))->firstOrFail();
-
-    $restaurant = Restaurant::create([
-        'name' => $request->input('restaurant.name'),
-        'address' => $request->input('restaurant.address'),
-        'cuisine_id' => $cuisine->id,
-        'city_id' => $city->id,
-        'description' => $request->input('restaurant.description'),
-    ]);
-
-    $createdTables = [];
-    $nbr_tables = 0;
-
-    if ($request->has('table_type') && $request->has('table_quantity')) {
-        foreach ($request->input('table_type') as $index => $tableType) {
-            $tableQuantity = $request->input('table_quantity')[$index];
-
-            for ($i = 0; $i < $tableQuantity; $i++) {
-                $table = Table::create([
-                    'type' => $tableType,
-                    'restaurant_id' => $restaurant->id,
-                ]);
-                $createdTables[] = $table;
-            }
-            $nbr_tables += $tableQuantity;
-        }
+    try {
+        $offer = Offer::findOrFail($id);
+        $offer->delete();
+        
+        return response()->json(['message' => 'Offer deleted successfully'], 200);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Failed to delete offer', 'error' => $e->getMessage()], 500);
     }
-
-    $restaurant->nbr_tables = $nbr_tables;
-    $restaurant->save();
-
-    $offer = Offer::create([
-        'type' => $request->input('type'),
-        'restaurant_id' => $restaurant->id,
-        'host_id' => '1',
-    ]);
-
-    return response()->json([
-        'restaurant' => $restaurant,
-        'tables' => $createdTables,
-        'offer' => $offer
-    ], 201);
 }
+        /*----------Admin--------*/
 
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        try {
-            $offer = Offer::findOrFail($id);
-            $offer->delete();
-            
-            return response()->json(['message' => 'Offer deleted successfully'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to delete offer', 'error' => $e->getMessage()], 500);
+        
+        public function AllOffers()
+        {
+            $offers = Offer::all();
+            foreach ($offers as $offer) {
+                $offer->host = $offer->host;
+            }
+            return response()->json(['offers' => $offers]);
         }
-    }
+    
+        public function deleteOffers(Request $request)
+        {
+            $ids = $request->ids_of_offers_to_delete;
+            foreach ($ids as $id) {
+                $offer = Offer::find($id);
+                if ($offer->car_id) {
+                    $offer->car->delete();
+                } elseif ($offer->tour_id) {
+                    $tour = $offer->tour;
+                    $transports = Transporation::where('tour_id', $tour->id)->get();
+                    foreach ($transports as $transport) {
+                        $transport->delete();
+                    }
+                    $activities = Activity::where('tour_id', $tour->id)->get();
+                    foreach ($activities as $activity) {
+                        $activity->delete();
+                    }
+                    $staff = Staff::where('tour_id', $tour->id)->get();
+                    foreach ($staff as $s) {
+                        $s->delete();
+                    }
+                    $tour->cities()->detach();
+                    $tour->delete();
+                } elseif ($offer->hotel_id) {
+                    $hotel = $offer->hotel;
+                    $rooms = Room::where('hotel_id', $hotel->id)->get();
+                    foreach ($rooms as $room) {
+                        $room->delete();
+                    }
+                    $hotel->delete();
+                } elseif ($offer->restaurant_id) {
+                    $restaurant = $offer->restaurant;
+                    $tables = Table::where('restaurant_id', $restaurant->id)->get();
+                    foreach ($tables as $table) {
+                        $table->delete();
+                    }
+                    $restaurant->delete();
+                }
+    
+                $images = Image::where('offer_id', $offer->id)->get();
+                foreach ($images as $image) {
+                    $image->delete();
+                }
+                $reservations = Reservation::where('offer_id', $offer->id)->get();
+                foreach ($reservations as $reservation) {
+                    $reservation->delete();
+                }
+                $offer->delete();
+            }
+    
+            return response()->json(['message' => "Offres supprimées !"]);
+        }
+    
 }

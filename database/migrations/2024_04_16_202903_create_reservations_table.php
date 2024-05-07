@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();
-            $table->date('reservation_date_restaurant')->nullable();
+            $table->dateTime('reservation_date_restaurant')->nullable();
             $table->integer('nbr_people')->nullable();
 
             $table->boolean('billed')->default(false);

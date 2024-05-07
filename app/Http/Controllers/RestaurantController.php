@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
-use App\Models\Model;
 use App\Models\City;
-
-use App\Models\Restaurant;
-use App\Models\Table;
-use App\Models\Cuisine;
-use App\Models\Reservation;
-
-
+use App\Models\Model;
 
 use App\Models\Offer;
+use App\Models\Table;
+use App\Models\Cbrand;
+use App\Models\Cmodel;
+use App\Models\Cuisine;
+use App\Models\Roomtype;
+use App\Models\Restaurant;
 
+
+
+use App\Models\Reservation;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class RestaurantController extends Controller
 {
@@ -25,7 +26,16 @@ class RestaurantController extends Controller
         $restaurants = Restaurant::all();
         return response()->json($restaurants);
     }
+    public function getRoomTyp(){
+        $roomType=Roomtype::pluck("name");
+        return response()->json(["roomType"=>$roomType]);
 
+    }
+       
+public function getRoomTypp(){
+    $roomTypes = Roomtype::all(); 
+    return response()->json(['roomTypes' => $roomTypes]);
+}
     public function restaurant_offers()
     {
         $offers = Offer::whereNotNull('restaurant_id')->with('images','host','reviews.client')->get();
@@ -61,6 +71,23 @@ class RestaurantController extends Controller
     }
     public function getCities(){
         $cities = City::pluck('name');
+    
+        return response()->json(['cities' => $cities]);
+    }
+    public function getModels(){
+        $model= Cmodel::all();
+        return response()->json(['model' => $model]);
+    }
+    public function getBrands(){
+        $brand= Cbrand::all();
+        return response()->json(['brand' => $brand]);
+    }
+     public function getModelsOfBrand($brand){
+        $models= Cmodel::where("cbrand_id",$brand)->get();
+        return response()->json(['models' => $models]);
+    }
+    public function getCitiesCities(){
+        $cities = City::all();
     
         return response()->json(['cities' => $cities]);
     }

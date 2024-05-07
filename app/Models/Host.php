@@ -21,6 +21,7 @@ class Host extends Model
         'address',
         'CIN',
         'password',
+        'telephone'
     ];
 
     public function user()

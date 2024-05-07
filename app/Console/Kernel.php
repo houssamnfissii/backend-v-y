@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Events\MonthlyBillingEvent;
+
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -25,6 +26,8 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             event(new MonthlyBillingEvent());
         })->monthlyOn(1, '00:00')->shouldAppendOutput('schedular.log');
+
+        
     }
 
 

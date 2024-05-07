@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->string('address');
+            $table->string('address')->nullable();
             $table->integer('nbr_tables')->nullable();
             $table->timestamps();
 

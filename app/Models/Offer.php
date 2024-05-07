@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\OfferCreateEvent;
 use App\Models\Car;
 use App\Models\Host;
 use App\Models\Tour;
@@ -55,4 +56,7 @@ class Offer extends Model
     public function reviews() {
         return $this->hasMany(Review::class);
     }
+    protected $dispatchesEvents=[
+        'created'=>OfferCreateEvent::class,
+    ];
 }

@@ -36,7 +36,7 @@ class TourController extends Controller
         foreach ($offers as $offer) {
             $tour = Tour::find($offer->tour_id);
             if ($tour) {
-                $cities = $tour->cities()->pluck('name','step')->toArray(); 
+                $cities = $tour->cities()->pluck('name')->toArray(); 
                 $activities = $tour->activities()->get(); 
                 $transports = $tour->transportations()->get(); 
                 $staffs = $tour->staffs()->get(); 

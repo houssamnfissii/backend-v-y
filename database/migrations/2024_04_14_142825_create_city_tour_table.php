@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('city_id')->references('id')->on('cities');
             $table->unsignedBigInteger('tour_id');
             $table->foreign('tour_id')->references('id')->on('tours')->onDelete('cascade');
-            $table->integer('step');
+            $table->integer('step')->nullable();
             $table->timestamps();
         });
     }
